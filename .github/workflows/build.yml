@@ -1,0 +1,25 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Compile example for iOS 18
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode version
+        run: xcodebuild -version
+
+      - name: Build for iOS
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -scheme FluidMotionExample \
+            -destination 'generic/platform=iOS'

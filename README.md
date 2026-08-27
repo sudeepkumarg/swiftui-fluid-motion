@@ -1,5 +1,7 @@
 # SwiftUI Fluid Motion
 
+[![Build](https://github.com/sudeepkumarg/swiftui-fluid-motion/actions/workflows/build.yml/badge.svg)](https://github.com/sudeepkumarg/swiftui-fluid-motion/actions/workflows/build.yml)
+
 Apps built with AI tend to feel stiff. Screens appear out of nowhere, numbers
 blink instead of counting, and nothing quite connects to what you tapped. The
 code is correct. It just feels cheap, and it is hard to say why.
@@ -127,12 +129,15 @@ before that. On an older target the skill falls back to an older method and
 tells you it has done so, rather than quietly producing something that will not
 work.
 
-## One honest caveat
+## Is it actually tested
 
-The example code was written and reviewed carefully but never compiled. Build it
-once before trusting it. If something does not work,
-[open an issue](https://github.com/sudeepkumarg/swiftui-fluid-motion/issues) and
-I will fix it.
+Yes. The example code is compiled for iOS 18 by GitHub's build machines on every
+change. The badge at the top of this page tells you whether the current version
+builds. If it is green, the code in `example/` compiles.
+
+What no build can check is whether the movement feels right, which is a
+judgement call rather than a fact. If something looks wrong to you,
+[open an issue](https://github.com/sudeepkumarg/swiftui-fluid-motion/issues).
 
 ## Contributing
 
