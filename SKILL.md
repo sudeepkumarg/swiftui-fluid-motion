@@ -1,9 +1,9 @@
 ---
-name: fluid-transitions
+name: swiftui-fluid-motion
 description: Motion and transition rules for SwiftUI on iOS 18+. Use when writing or reviewing any SwiftUI navigation, screen change, sheet, tray, expand/collapse, or animation, including NavigationStack destinations, sheet and fullScreenCover presentations, list-to-detail flows, value changes, gesture-driven dismissal, and any withAnimation or .animation call. Enforces spatial origins, shared-element zoom transitions, intent-named spring tokens, interruptibility, and Reduce Motion fallbacks.
 ---
 
-# Fluid Transitions
+# SwiftUI Fluid Motion
 
 Motion is navigation, not decoration. Every animation tells the user where they
 came from and how to get back, and motion that answers neither is noise.

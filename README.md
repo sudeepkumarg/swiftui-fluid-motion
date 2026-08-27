@@ -1,4 +1,4 @@
-# swiftui-fluid-motion
+# SwiftUI Fluid Motion
 
 An AI skill that makes Claude and GPT write SwiftUI motion that actually
 navigates, instead of screens that arrive with no relationship to what you
