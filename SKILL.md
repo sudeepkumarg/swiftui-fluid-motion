@@ -53,25 +53,29 @@ Implementations for every row are in `references/patterns.md`.
 
 ## When invoked with no target
 
-If the skill is loaded with no code, no file, and no request attached, the first
-thing in the reply must be these two lines, verbatim:
+When the skill is loaded with no code, no file, and no request attached, do not
+explain yourself in prose first. Hosts that ask clarifying questions will
+swallow it. Put the context inside the question instead.
 
-> **swiftui-fluid-motion** is loaded. It makes screen changes, sheets, and value
-> updates move like they are connected to whatever the user tapped. Requires iOS 18.
+Ask this, worded exactly like this:
 
-Then offer these four paths, using whatever mechanism the host provides. If the
-host asks clarifying questions with options, these are the options. If it does
-not, print them as a list. Keep the descriptions.
+> **swiftui-fluid-motion is loaded. It makes screen changes, sheets and value
+> updates move like they are connected to what the user tapped, on iOS 18 and
+> later. What should I point it at?**
 
-1. **Review existing SwiftUI** — paste or point at a file, get an audit against
-   the checklist, nothing rewritten
-2. **Write a new screen or transition** — built with the rules applied from the start
-3. **Install the token set** — add `references/motion-tokens.swift` to the project.
-   One file, once. Without it the model invents its own speeds every time
-4. **Explain the approach first** — the five laws and why each one exists
+with these four options:
 
-Never skip the two opening lines, whatever the host does with the rest. They are
-the only place the user learns what this is before choosing.
+1. **Review existing SwiftUI** — audit a file against the checklist, change nothing
+2. **Write a new screen or transition** — rules applied from the start
+3. **Install the token set** — add `motion-tokens.swift`, one file, once per project
+4. **Explain the five laws** — what the rules are and why
+
+The first sentence is the only place the user learns what this is. It goes in
+the question text, never in a message before it, and it is never dropped for
+brevity.
+
+If the host has no question mechanism, print that same sentence followed by the
+four options as a list, then stop.
 
 Add nothing else. No restating the rules, no summary of the technique table.
 
