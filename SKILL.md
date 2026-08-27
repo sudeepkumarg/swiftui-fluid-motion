@@ -51,6 +51,36 @@ becomes nothing. A missing fallback is a shipped bug.
 
 Implementations for every row are in `references/patterns.md`.
 
+## When invoked with no target
+
+If the skill is loaded with no code, no file, and no request attached, print
+exactly this and then stop. Do not add a preamble, do not restate the rules, do
+not ask a clarifying question first.
+
+---
+
+**swiftui-fluid-motion** is loaded. It makes screen changes, sheets, and value
+updates move like they are connected to whatever the user tapped.
+
+Four things to try:
+
+- *"Build a portfolio list that opens into a detail view"* — new screens, wired up with motion
+- *"Add a filter tray to this screen"* — a sheet that keeps its context
+- *"Review this screen's transitions"* — paste a file, get an audit, no rewrite
+- *"The balance updates live, make it not look broken"* — values that roll rather than blink
+
+One setup step, once per project: add `references/motion-tokens.swift` to the
+app. It names every speed and bounce the rules refer to. Without it the model
+invents its own each time.
+
+Requires iOS 18.
+
+---
+
+If a request, file, or code IS attached, skip all of the above. Do the work.
+Never open with an explanation of yourself.
+
+
 ## Motion tokens
 
 Never write a duration or damping value inline. Pick the token whose name
