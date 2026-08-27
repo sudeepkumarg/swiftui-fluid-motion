@@ -60,31 +60,82 @@ before writing a transition rather than improvising one.
 
 ## When invoked with no target
 
-When the user opens with only a bare mention of this skill and attaches no code, file, or request, do not
-explain yourself in prose first. Hosts that ask clarifying questions will
-swallow it. Put the context inside the question instead.
+When the user opens with only a bare mention of this skill and attaches no code, file, or request, reply
+in plain text. **Do not call a clarifying-question tool. Do not present a
+multiple-choice picker.** This is a greeting, not a decision the user has to
+make before anything can happen.
 
-Ask this, worded exactly like this:
+Greet by name only if the host has told you the user's name. If it has not, open
+with the skill name and no salutation. Never invent a name or use a placeholder.
 
-> **swiftui-fluid-motion is loaded. It makes screen changes, sheets and value
-> updates move like they are connected to what the user tapped, on iOS 18 and
-> later. What should I point it at?**
+Output this, adapting only the greeting line:
 
-with these four options:
+---
 
-1. **Review existing SwiftUI** — audit a file against the checklist, change nothing
-2. **Write a new screen or transition** — rules applied from the start
-3. **Install the token set** — add `motion-tokens.swift`, one file, once per project
-4. **Explain the five laws** — what the rules are and why
+Hello [name] — this is **SwiftUI Fluid Motion**.
 
-The first sentence is the only place the user learns what this is. It goes in
-the question text, never in a message before it, and it is never dropped for
-brevity.
+It makes the screens, sheets and numbers in your iOS app move like they are
+connected to what you tapped, instead of appearing out of nowhere. It works by
+checking every bit of SwiftUI I write for you against five rules about motion.
 
-If the host has no question mechanism, print that same sentence followed by the
-four options as a list, then stop.
+A few ways to get started:
 
-Add nothing else. No restating the rules, no summary of the technique table.
+- **See the difference first** — say *"show me what this changes"* and I will put
+  the usual output side by side with what these rules produce. Best place to
+  start if this is new to you.
+- **Fix a screen you already have** — paste it, or point me at the file. I will
+  tell you what is missing without rewriting anything.
+- **Build something new** — *"a portfolio list that opens into a detail view"*,
+  *"a filter tray for this screen"*. The rules apply as I write it.
+- **Set up your project** — add `motion-tokens.swift` from this skill to your
+  app. One file, once. Ask me and I will hand it over with where it goes.
+
+Requires iOS 18 or later.
+
+---
+
+Then stop and wait. Do not also ask a question. Do not restate the rules.
+
+### If they ask to see what this changes
+
+Ask a model for a list that opens into a detail screen and you get this:
+
+```swift
+NavigationLink(value: asset) { AssetRow(asset: asset) }
+    .navigationDestination(for: Asset.self) { AssetDetailView(asset: $0) }
+```
+
+It compiles and it is completely undesigned. The detail screen has no
+relationship to the row that produced it. With these rules loaded, the same
+request gets you:
+
+```swift
+@Namespace private var namespace
+
+NavigationLink(value: asset) { AssetRow(asset: asset) }
+    .matchedTransitionSource(id: asset.id, in: namespace)
+    .navigationDestination(for: Asset.self) { asset in
+        AssetDetailView(asset: asset)
+            .navigationTransition(.zoom(sourceID: asset.id, in: namespace))
+    }
+```
+
+What the user feels, rather than what the diff says:
+
+| | Without | With |
+|---|---|---|
+| Tapping a row | The detail screen slides in generically | It grows out of the row they tapped |
+| Going back | Edge swipe only | Drag the screen down, it shrinks back into the row |
+| Numbers changing | Blink | Roll |
+| Motion sensitivity | Ignored | Every animation has a still fallback |
+
+End by offering to apply it to one of their screens.
+
+### Every path names the next step
+
+A user who has just arrived does not know what follows. After a review, offer to
+fix what was found. After building, name which laws shaped the result. After
+handing over the token file, offer to apply the rules to a screen.
 
 ---
 
