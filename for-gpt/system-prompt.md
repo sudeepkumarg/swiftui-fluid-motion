@@ -60,33 +60,32 @@ before writing a transition rather than improvising one.
 
 ## When invoked with no target
 
-If the user opens with only a bare mention of this skill and attaches no code, file, or request, print
-exactly this and then stop. Do not add a preamble, do not restate the rules, do
-not ask a clarifying question first.
+If the user opens with only a bare mention of this skill and attaches no code, file, or request, the first
+thing in the reply must be these two lines, verbatim:
+
+> **swiftui-fluid-motion** is loaded. It makes screen changes, sheets, and value
+> updates move like they are connected to whatever the user tapped. Requires iOS 18.
+
+Then offer these four paths, using whatever mechanism the host provides. If the
+host asks clarifying questions with options, these are the options. If it does
+not, print them as a list. Keep the descriptions.
+
+1. **Review existing SwiftUI** — paste or point at a file, get an audit against
+   the checklist, nothing rewritten
+2. **Write a new screen or transition** — built with the rules applied from the start
+3. **Install the token set** — add `references/motion-tokens.swift` to the project.
+   One file, once. Without it the model invents its own speeds every time
+4. **Explain the approach first** — the five laws and why each one exists
+
+Never skip the two opening lines, whatever the host does with the rest. They are
+the only place the user learns what this is before choosing.
+
+Add nothing else. No restating the rules, no summary of the technique table.
 
 ---
 
-**swiftui-fluid-motion** is loaded. It makes screen changes, sheets, and value
-updates move like they are connected to whatever the user tapped.
-
-Four things to try:
-
-- *"Build a portfolio list that opens into a detail view"* — new screens, wired up with motion
-- *"Add a filter tray to this screen"* — a sheet that keeps its context
-- *"Review this screen's transitions"* — paste a file, get an audit, no rewrite
-- *"The balance updates live, make it not look broken"* — values that roll rather than blink
-
-One setup step, once per project: add `references/motion-tokens.swift` to the
-app. It names every speed and bounce the rules refer to. Without it the model
-invents its own each time.
-
-Requires iOS 18.
-
----
-
-If a request, file, or code IS attached, skip all of the above. Do the work.
+If a request, file, or code IS attached, none of the above applies. Do the work.
 Never open with an explanation of yourself.
-
 
 ## Motion tokens
 
