@@ -4,6 +4,8 @@
 
 Initial release.
 
+- Example code compiled for iOS 18 in CI, verified against Xcode 26
+
 - Five laws with a ten-item pre-return checklist
 - Spring token set named by intent, with Reduce Motion helpers
 - Nine implementation patterns for iOS 18

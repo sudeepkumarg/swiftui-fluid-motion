@@ -26,13 +26,13 @@ jobs:
       - name: Schemes xcodebuild can see
         run: xcodebuild -list || true
 
-      # Compiles the package against the iOS SDK directly. No scheme, no
-      # workspace, no Xcode project. This answers exactly one question: does the
-      # SwiftUI in example/ and references/ compile for iOS 18.
+      # Builds with xcodebuild against a generic iOS destination. Cross
+      # compiling via `swift build -Xswiftc -sdk` does not work: SwiftPM injects
+      # its own macOS sysroot afterwards and the target flag is ignored.
       - name: Compile for iOS 18
         run: |
           set -o pipefail
-          SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
-          swift build \
-            -Xswiftc -sdk -Xswiftc "$SDK" \
-            -Xswiftc -target -Xswiftc arm64-apple-ios18.0
+          xcodebuild build \
+            -scheme FluidMotionExample \
+            -destination 'generic/platform=iOS' \
+            -quiet

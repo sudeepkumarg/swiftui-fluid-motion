@@ -1,17 +1,21 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 import PackageDescription
 
 // This package exists so CI can prove the example compiles. It is not something
 // you add to your project. Copy references/motion-tokens.swift into your app
 // instead, as the README describes.
 //
-// Tools version is 5.10 rather than 6.0 deliberately. Swift 6 language mode
-// turns on strict concurrency checking, which would make this package fail on
-// Sendable rules that have nothing to do with whether the motion code is
-// correct. The point here is to compile the SwiftUI, not to audit concurrency.
+// Package, product and target deliberately share one name. xcodebuild derives
+// scheme names from a package and the mapping is not obvious, so making all
+// three identical means any scheme it generates resolves to the same string.
+//
+// Tools version must be 6.0: `.iOS(.v18)` does not exist before
+// PackageDescription 6.0. The language mode is pinned to v5 so Swift 6 strict
+// concurrency does not fail the build on Sendable rules unrelated to whether
+// the motion code is correct.
 
 let package = Package(
-    name: "SwiftUIFluidMotion",
+    name: "FluidMotionExample",
     platforms: [.iOS(.v18)],
     products: [
         .library(name: "FluidMotionExample", targets: ["FluidMotionExample"])
@@ -35,7 +39,8 @@ let package = Package(
                 "references/motion-tokens.swift",
                 "example/Support.swift",
                 "example/with-skill.swift"
-            ]
+            ],
+            swiftSettings: [.swiftLanguageMode(.v5)]
         )
     ]
 )
