@@ -37,13 +37,13 @@ before/after antipattern pairs.
 
 ### Claude (skills)
 
-Download [`swiftui-fluid-motion.skill`](../../releases/latest) and add it to
-your Claude account, or drop this folder into your skills directory.
+Download [`swiftui-fluid-motion.skill`](swiftui-fluid-motion.skill) and add it
+to your Claude account, or drop this folder into your skills directory.
 
 ### Claude Code
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/swiftui-fluid-motion.git \
+git clone https://github.com/sudeepkumarg/swiftui-fluid-motion.git \
   ~/.claude/skills/swiftui-fluid-motion
 ```
 
