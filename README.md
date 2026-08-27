@@ -1,230 +1,154 @@
 # SwiftUI Fluid Motion
 
-An AI skill that makes Claude and GPT write SwiftUI motion that actually
-navigates, instead of screens that arrive with no relationship to what you
-tapped.
+Apps built with AI tend to feel stiff. Screens appear out of nowhere, numbers
+blink instead of counting, and nothing quite connects to what you tapped. The
+code is correct. It just feels cheap, and it is hard to say why.
 
-It is a direct translation of [**Family Values**](https://benji.org/family-values)
-by [Benji Taylor](https://x.com/benjitaylor), the design principles behind the
-Family wallet, into rules an AI model can check before it hands you code. The
-thinking is his. This repo turns it into something enforceable.
+This is a skill you add to Claude or GPT. Once it is installed, the code they
+write for your iOS app moves properly, without you having to know what any of
+that means.
 
-## The problem
+It is a translation of [**Family Values**](https://benji.org/family-values) by
+[Benji Taylor](https://x.com/benjitaylor), the design principles behind the
+Family wallet, into rules an AI can check itself against. The thinking is his.
+This turns it into something enforceable.
 
-Ask any model for a SwiftUI detail view and the code compiles, uses
-`NavigationStack` correctly, and looks fine in a diff. It also has no
-`@Namespace`, no transition, no animation of any kind, and no Reduce Motion
-handling. The detail view has no relationship to the row that produced it.
+## What you need
 
-The output is not bad. It is undesigned. See
-[the real comparison below](#what-actually-changes).
+- A Mac with Xcode
+- An iOS app you are building, targeting iOS 18 or later
+- Claude or GPT, whichever you already use to write code
 
-## What this does
+**You do not need to know Swift.** You do need a real iOS project for the code
+to go into. If you are building for the web, this will not help you yet.
 
-Five laws, each one checkable:
+## What changes
 
-1. **Give every screen change a spatial origin.** A view appears from something
-   the user just touched. No named source means the transition is wrong.
-2. **Use springs for anything the user touches.** Timing curves are for looping,
-   non-interactive motion only.
-3. **Encode hierarchy in direction.** Forward is deeper. Back reverses the exact
-   path in.
-4. **Animate state, and keep it interruptible.** Interrupted motion reverses
-   from its current position and velocity. It does not snap and restart.
-5. **Branch on Reduce Motion.** A missing fallback is a shipped bug.
+The same request, asked of an AI with and without this skill installed.
 
-Plus a ten-item checklist the model runs against its own output before
-returning, a spring token set named by intent rather than number, and twelve
-before/after antipattern pairs.
+| | Without | With |
+|---|---|---|
+| Tapping something | The next screen replaces the last one with a generic slide | The next screen grows out of the exact thing you tapped |
+| Going back | Only the edge swipe works | Drag the screen down and it shrinks back into where it came from |
+| Numbers updating | Blink to the new value | Roll from the old value to the new one |
+| Timing | Uniform and mechanical | Physics, and leaving is quicker than arriving |
+| Motion sensitivity settings | Ignored | Every animation has a still fallback |
+
+Structurally the two versions are near identical. Every difference is movement.
+
+The actual code for both is in [`example/`](example/): the unedited AI output
+with no skill loaded, and the same request with it. Worth a look if you want to
+see the difference rather than take my word for it.
 
 ## Install
 
-### Claude (skills)
+### Claude
 
 **[⬇ Download swiftui-fluid-motion.skill](https://github.com/sudeepkumarg/swiftui-fluid-motion/raw/main/swiftui-fluid-motion.skill)**
 
-That link downloads the file directly. Add it to your Claude account, or drop
-this folder into your skills directory. It is also attached to every
+That link downloads the file. Add it to your Claude account and you are done. It
+is also attached to every
 [release](https://github.com/sudeepkumarg/swiftui-fluid-motion/releases).
 
 ### Claude Code
 
-```bash
+```
 git clone https://github.com/sudeepkumarg/swiftui-fluid-motion.git \
   ~/.claude/skills/swiftui-fluid-motion
 ```
 
-### GPT (Custom GPTs, Projects)
+### GPT
 
-Paste [`for-gpt/system-prompt.md`](for-gpt/system-prompt.md) into your
-Instructions field. Upload the files in `references/` as knowledge files.
+Copy everything in [`for-gpt/system-prompt.md`](for-gpt/system-prompt.md) into
+the Instructions field of a Custom GPT or a Project. Upload the three files in
+[`references/`](references/) as knowledge files.
 
-## How to use
+## How to use it
 
-Once installed, you do not invoke it. Ask for SwiftUI the way you normally
-would and the rules apply themselves.
-
-**It triggers on** navigation, screen changes, sheets, trays, expand and
-collapse, value changes, gesture-driven dismissal, and any `withAnimation` or
-`.animation` call. Outside that scope it stays out of the way.
-
-Prompts that work:
+You do not have to invoke it. Ask for what you want the way you normally would
+and the rules apply themselves.
 
 ```
-Build a portfolio list that opens into an asset detail view.
+Build a portfolio list that opens into a detail view.
 
 Add a filter tray to this screen.
 
-The balance number updates from a websocket. Make it not look broken.
+The balance updates live. Make it not look broken.
 
-Review this file's transitions.
+Review this screen's transitions.
 ```
 
-That last one is the underrated case. Point it at existing code and it audits
-against the ten-item checklist rather than writing anything new.
+That last one is the underrated case. Point it at something you already built
+and it audits the work rather than writing anything new.
 
-**What you should see change:**
+**One thing worth doing on day one.** Ask your AI to add
+[`references/motion-tokens.swift`](references/motion-tokens.swift) to your
+project. It is a small file that names every speed and bounce the rules refer
+to. Without it the AI invents its own each time, and you end up with three
+slightly different versions of the same movement.
 
-- A `@Namespace` appears, declared at the right level
-- `matchedTransitionSource` on the source, `navigationTransition(.zoom:)` on the destination
-- Spring tokens by name, never `.easeInOut(duration: 0.3)`
-- Exit motion faster than entry
-- `contentTransition(.numericText:)` on anything that counts
-- A Reduce Motion branch on every custom transition
+**If nothing seems different,** say "using the fluid motion rules" once in your
+message. That wakes it up.
 
-**If it isn't triggering,** the skill description is the trigger surface. Say
-"using the fluid motion rules" once and it will load.
+## What the rules are
 
-**One habit worth forming:** copy
-[`references/motion-tokens.swift`](references/motion-tokens.swift) into your
-project on day one. The rules assume `Motion.navigate` and friends exist. Without
-the file the model will invent tokens, and you will end up with three versions of
-the same spring.
+Five of them, in plain terms:
 
-## What actually changes
+1. **Things come from somewhere.** A new screen grows out of whatever you
+   tapped, rather than appearing from nowhere.
+2. **Movement obeys physics.** Anything you touch responds like a physical
+   object, not on a fixed timer.
+3. **Direction means something.** Forward goes deeper. Back retraces the exact
+   way in.
+4. **You can interrupt it.** Change your mind mid-swipe and the motion reverses
+   from where it is, rather than snapping and starting over.
+5. **It respects motion sensitivity.** If someone has reduced motion turned on,
+   every animation has a still version.
 
-Real output, not a strawman. The same prompt run twice, once with no skill
-loaded and once with it. Full files in [`example/`](example/).
-
-**Prompt:** *"Write a SwiftUI view for an iOS 18 app: a list of crypto assets
-where tapping an asset navigates to a detail view showing that asset's balance
-and a placeholder chart."*
-
-### Before
-
-```swift
-struct AssetListView: View {
-    let assets: [CryptoAsset] = CryptoAsset.sampleAssets
-
-    var body: some View {
-        NavigationStack {
-            List {
-                Section("Assets") {
-                    ForEach(assets) { asset in
-                        NavigationLink(value: asset) {
-                            AssetRow(asset: asset)
-                        }
-                    }
-                }
-            }
-            .navigationDestination(for: CryptoAsset.self) { asset in
-                AssetDetailView(asset: asset)
-            }
-        }
-    }
-}
-```
-
-Correct code. Zero motion decisions. The detail view arrives as a generic push
-with no connection to the row that produced it.
-
-### After
-
-```swift
-struct AssetListView: View {
-    @Namespace private var namespace                       // LAW 1
-    let assets: [CryptoAsset] = CryptoAsset.sampleAssets
-
-    var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    Text(totalUSDValue, format: .currency(code: "USD"))
-                        .font(.largeTitle.bold())
-                        .contentTransition(.numericText(value: totalUSDValue))
-                        .motion(Motion.feedback, value: totalUSDValue)   // LAW 4
-                }
-
-                Section("Assets") {
-                    ForEach(assets) { asset in
-                        NavigationLink(value: asset) {
-                            AssetRow(asset: asset)
-                        }
-                        .matchedTransitionSource(id: asset.id, in: namespace)   // LAW 1
-                    }
-                }
-            }
-            .navigationDestination(for: CryptoAsset.self) { asset in
-                AssetDetailView(asset: asset)
-                    .navigationTransition(.zoom(sourceID: asset.id, in: namespace))  // LAW 3
-            }
-        }
-    }
-}
-```
-
-### The diff, itemised
-
-| | Before | After |
-|---|---|---|
-| Spatial origin | none | `matchedTransitionSource` per row |
-| Transition | system default push | zoom out of the tapped row, interactive dismiss back to it |
-| Back gesture | edge swipe only | drag the detail down, it returns to its origin |
-| Value changes | instant | `numericText`, rolls |
-| Motion values | none | named tokens |
-| Reduce Motion | unhandled | branched on every custom transition |
-
-Structurally the two files are the same. Every difference is motion.
+There is also a ten-point checklist the AI runs against its own work before
+handing it to you, and a list of twelve mistakes it has been told not to make.
 
 ## What's inside
 
-| File | Purpose |
+| File | What it is |
 |---|---|
-| `SKILL.md` | The five laws, technique table, and pre-return checklist |
-| `references/motion-tokens.swift` | Spring tokens named by intent, plus Reduce Motion helpers |
-| `references/patterns.md` | Working implementation of all nine techniques |
-| `references/antipatterns.md` | Twelve before/after pairs |
-| `example/baseline.swift` | Unedited model output, no skill loaded |
-| `example/with-skill.swift` | Same prompt, skill loaded, annotated by law |
-| `for-gpt/system-prompt.md` | Same rules, formatted for GPT |
+| `SKILL.md` | The rules the AI reads |
+| `references/motion-tokens.swift` | The named speeds and bounces to add to your project |
+| `references/patterns.md` | Worked examples of each kind of movement |
+| `references/antipatterns.md` | Twelve mistakes and their fixes |
+| `example/baseline.swift` | Real AI output with no skill loaded |
+| `example/with-skill.swift` | The same request with it, annotated |
+| `for-gpt/system-prompt.md` | The same rules, formatted for GPT |
 
 ## Requirements
 
-iOS 18 and later. `navigationTransition(.zoom:)` and `matchedTransitionSource`
-are iOS 18 APIs. Spring presets, `numericText`, and `PhaseAnimator` need iOS 17.
-Below iOS 18 the skill substitutes `matchedGeometryEffect` and says so, rather
-than degrading silently.
+iOS 18 and later. Two of the techniques are iOS 18 APIs and have no equivalent
+before that. On an older target the skill falls back to an older method and
+tells you it has done so, rather than quietly producing something that will not
+work.
 
-## A caveat worth reading
+## One honest caveat
 
-The reference code was written against the API surface and reviewed by hand, not
-compiled. Build it once before you trust it. If you hit something that does not
-compile, open an issue and I will fix it.
+The example code was written and reviewed carefully but never compiled. Build it
+once before trusting it. If something does not work,
+[open an issue](https://github.com/sudeepkumarg/swiftui-fluid-motion/issues) and
+I will fix it.
 
 ## Contributing
 
 Useful contributions, roughly in order:
 
-- Compile fixes for the reference code
-- Additional antipattern pairs you have hit in real projects
-- A React or Jetpack Compose variant of the same five laws
+- Fixes for anything that does not compile
+- Mistakes you have hit that are not in the list of twelve
+- A web or Android version of the same five rules
 - Evidence that a rule is wrong. That is the most valuable kind of issue.
 
 ## Credit
 
-Every idea in here traces back to [Family Values](https://benji.org/family-values)
-by [Benji Taylor](https://x.com/benjitaylor). If this repo is useful to you, read
-the original. It is better than my summary of it.
+Every idea here traces back to
+[Family Values](https://benji.org/family-values) by
+[Benji Taylor](https://x.com/benjitaylor). If this is useful to you, read the
+original. It is better than my summary of it.
 
 ## License
 
