@@ -41,8 +41,11 @@ before/after antipattern pairs.
 
 ### Claude (skills)
 
-Download [`swiftui-fluid-motion.skill`](swiftui-fluid-motion.skill) and add it
-to your Claude account, or drop this folder into your skills directory.
+**[⬇ Download swiftui-fluid-motion.skill](https://github.com/sudeepkumarg/swiftui-fluid-motion/raw/main/swiftui-fluid-motion.skill)**
+
+That link downloads the file directly. Add it to your Claude account, or drop
+this folder into your skills directory. It is also attached to every
+[release](https://github.com/sudeepkumarg/swiftui-fluid-motion/releases).
 
 ### Claude Code
 
