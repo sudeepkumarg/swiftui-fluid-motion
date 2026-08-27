@@ -14,12 +14,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Xcode version
-        run: xcodebuild -version
+      - name: Environment
+        run: |
+          xcodebuild -version
+          swift --version
+          xcrun --sdk iphoneos --show-sdk-path
 
-      - name: Build for iOS
+      # Diagnostic only. xcodebuild invents a workspace named after the folder
+      # and its generated scheme names do not reliably match the product name,
+      # which is why the build step below does not use it. Never fails the job.
+      - name: Schemes xcodebuild can see
+        run: xcodebuild -list || true
+
+      # Compiles the package against the iOS SDK directly. No scheme, no
+      # workspace, no Xcode project. This answers exactly one question: does the
+      # SwiftUI in example/ and references/ compile for iOS 18.
+      - name: Compile for iOS 18
         run: |
           set -o pipefail
-          xcodebuild build \
-            -scheme FluidMotionExample \
-            -destination 'generic/platform=iOS'
+          SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
+          swift build \
+            -Xswiftc -sdk -Xswiftc "$SDK" \
+            -Xswiftc -target -Xswiftc arm64-apple-ios18.0
